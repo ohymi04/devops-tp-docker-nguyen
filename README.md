@@ -1,9 +1,3 @@
-Parfait 👍
-Voici un **README.md complet, professionnel et prêt à être rendu**, adapté **exactement à ton TP**, ton repo **`devops-tp-docker-nguyen`** et **GHCR**.
-Tu peux **copier-coller tel quel**.
-
----
-
 # 🚀 TP DevOps – Déploiement Automatisé avec Docker & GitHub Actions
 
 ## 📌 Description du projet
