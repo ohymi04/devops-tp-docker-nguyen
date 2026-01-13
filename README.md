@@ -34,6 +34,8 @@ Code → SAST → Hadolint → Build → Trivy → Security Gates → GHCR
 ```bash
 docker pull ghcr.io/[username]/devops-tp-docker-[nom]:main
 docker run -p 8080:8080 ghcr.io/[username]/devops-tp-docker-[nom]:main
+```
+
 Accéder à : http://localhost:8080
 
 Scan de Sécurité Local
@@ -85,3 +87,4 @@ trivy image --format template --template "@contrib/html.tpl" -o report.html ngin
 
 # Liste des vulnérabilités par package
 trivy image --list-all-pkgs nginx:alpine
+```
