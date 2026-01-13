@@ -1,201 +1,86 @@
-# 🚀 TP DevOps – Déploiement Automatisé avec Docker & GitHub Actions
+# TP DevSecOps avec Docker
 
-## 📌 Description du projet
+![Build and Scan](https://github.com/[username]/devops-tp-docker-[nom]/actions/workflows/docker-deploy.yml/badge.svg)
+![CodeQL](https://github.com/[username]/devops-tp-docker-[nom]/actions/workflows/codeql-analysis.yml/badge.svg)
 
-Ce projet a pour objectif de mettre en œuvre une **chaîne CI/CD complète** permettant de :
+## Pipeline DevSecOps
 
-* Conteneuriser une application web statique avec **Docker**
-* Déployer automatiquement une image Docker via **GitHub Actions**
-* Publier l’image sur **GitHub Container Registry (GHCR)**
-* Gérer le **versioning automatique** des images Docker
+Ce projet implémente un pipeline CI/CD sécurisé pour Docker avec :
 
-L’application web est servie par **Nginx** et affiche des informations simulées sur le conteneur et son état.
+- Analyse statique du code (CodeQL)
+- Lint du Dockerfile (Hadolint)
+- Scan de l'image Docker (Trivy)
+- Scan des dépendances (Dependabot)
+- Secret Scanning
+- Security Gates (blocage sur vulnérabilités critiques)
+- SBOM (Software Bill of Materials)
 
----
+## Architecture de Sécurité
 
-## 🧱 Architecture du projet
+Code → SAST → Hadolint → Build → Trivy → Security Gates → GHCR
 
-```
-devops-tp-docker-nguyen/
-├── .github/
-│   └── workflows/
-│       └── docker-deploy.yml
-├── src/
-│   ├── index.html
-│   ├── style.css
-│   └── app.js
-├── nginx/
-│   └── nginx.conf
-├── Dockerfile
-├── .dockerignore
-└── README.md
-```
 
----
+## Sécurité de l'Image
 
-## 🎯 Objectifs pédagogiques
+- Image de base : nginx:alpine (version spécifique)
+- Utilisateur non-root
+- Headers de sécurité renforcés
+- Health checks
+- Pas de secrets dans l'image
 
-* Comprendre la **conteneurisation** d’une application web
-* Utiliser **Docker** et **Nginx**
-* Mettre en place un **pipeline CI/CD**
-* Publier des images sur **GHCR**
-* Utiliser les **tags Git pour le versioning**
-* Appliquer les **bonnes pratiques DevOps**
-
----
-
-## ⚙️ Prérequis
-
-* Compte GitHub
-* Docker Desktop installé
-* Git installé
-* Éditeur de code (VS Code recommandé)
-
-### Vérification de Docker
+## Exécution Locale
 
 ```bash
-docker --version
-docker run hello-world
-```
+docker pull ghcr.io/[username]/devops-tp-docker-[nom]:main
+docker run -p 8080:8080 ghcr.io/[username]/devops-tp-docker-[nom]:main
+Accéder à : http://localhost:8080
+
+Scan de Sécurité Local
+trivy image ghcr.io/[username]/devops-tp-docker-[nom]:main
 
 ---
 
-## 🌐 Application Web
+## Résultats Attendus
 
-L’application est une page HTML/CSS/JavaScript qui :
+À la fin de ce TP, vous devez avoir :
 
-* Affiche l’état du container
-* Simule un test de fonctionnement
-* Montre les informations Docker et CI/CD
-* Est servie via **Nginx**
+**Pipeline DevSecOps complet :**
+- CodeQL pour l'analyse du code source
+- Hadolint pour le lint du Dockerfile
+- Trivy pour le scan des images
+- Dependabot pour les dépendances
+- Secret Scanning activé
+- Security Gates fonctionnels
+
+**Image Docker sécurisée :**
+- Utilisateur non-root
+- Image de base à jour
+- Dépendances corrigées
+- Headers de sécurité
+- Pas de vulnérabilités HIGH/CRITICAL
+
+**Visibilité :**
+- Dashboard Security complet
+- Alertes automatiques
+- SBOM généré
+- Badges dans README
 
 ---
 
-## 🐳 Conteneurisation avec Docker
-
-### 📄 Dockerfile
-
-* Image de base : `nginx:alpine`
-* Configuration Nginx personnalisée
-* Copie des fichiers statiques
-* Healthcheck HTTP
-* Port exposé : `80`
-
-### Build local
+## Commandes Trivy Avancées
 
 ```bash
-docker build -t devops-tp-docker .
-```
+# Scan d'un filesystem
+trivy fs .
 
-### Exécution locale
+# Scan avec ignoré des unfixed
+trivy image --ignore-unfixed nginx:alpine
 
-```bash
-docker run -d -p 8080:80 --name devops-tp devops-tp-docker
-```
+# Scan de config Kubernetes
+trivy config k8s-manifest.yaml
 
-➡️ Accès : [http://localhost:8080](http://localhost:8080)
+# Scan avec template personnalisé
+trivy image --format template --template "@contrib/html.tpl" -o report.html nginx:alpine
 
----
-
-## 🔁 Pipeline CI/CD – GitHub Actions
-
-Le pipeline se déclenche automatiquement :
-
-* À chaque **push sur la branche main**
-* Lors de la création d’un **tag Git (vX.Y.Z)**
-
-### Fonctionnalités du pipeline :
-
-* Build de l’image Docker
-* Tag automatique
-* Push vers **GitHub Container Registry**
-* Cache Docker activé
-
-### Image publiée sur GHCR :
-
-```
-ghcr.io/ohymi04/devops-tp-docker-nguyen
-```
-
----
-
-## 📦 Utilisation de l’image depuis GHCR
-
-### Pull de l’image
-
-```bash
-docker pull ghcr.io/ohymi04/devops-tp-docker-nguyen:latest
-```
-
-### Lancer le container
-
-```bash
-docker run -d -p 8090:80 ghcr.io/ohymi04/devops-tp-docker-nguyen:latest
-```
-
-➡️ Accès : [http://localhost:8090](http://localhost:8090)
-
----
-
-## 🏷️ Versioning avec Git Tags
-
-Création d’un tag :
-
-```bash
-git tag -a v1.0.0 -m "Version 1.0.0"
-git push origin v1.0.0
-```
-
-Images générées automatiquement :
-
-* `v1.0.0`
-* `1.0`
-* `latest`
-
----
-
-## 🧪 Commandes Docker utiles
-
-```bash
-# Lister les images
-docker images
-
-# Lister les containers
-docker ps -a
-
-# Logs d’un container
-docker logs <container_id>
-
-# Exécuter une commande dans un container
-docker exec -it <container_id> sh
-
-# Arrêter et supprimer un container
-docker stop <container_id>
-docker rm <container_id>
-
-# Nettoyage Docker
-docker image prune -a
-docker system df
-```
-
----
-
-## ✅ Résultats obtenus
-
-* ✔ Application web fonctionnelle
-* ✔ Image Docker optimisée
-* ✔ Pipeline CI/CD opérationnel
-* ✔ Publication sur GHCR
-* ✔ Versioning automatique
-* ✔ Bonnes pratiques DevOps respectées
-
----
-
-## 👨‍🎓 Auteur
-
-**Ohymi04**
-TP DevOps – Docker & GitHub Actions
-GitHub : [https://github.com/ohymi04](https://github.com/ohymi04)
-
----
-
+# Liste des vulnérabilités par package
+trivy image --list-all-pkgs nginx:alpine
