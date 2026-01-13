@@ -4,7 +4,7 @@ FROM nginx:1.25.3-alpine
 # Métadonnées
 LABEL maintainer="TP DevOps"
 LABEL description="Application DevOps sécurisée"
-LABEL org.opencontainers.image.source="https://github.com/[username]/[repo]"
+LABEL org.opencontainers.image.source="https://github.com/ohymi04/devops-tp-docker-nguyen"
 
 # Créer un utilisateur non-root
 RUN addgroup -g 1000 -S appgroup && \
